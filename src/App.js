@@ -1,10 +1,14 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { css, keyframes } from "@emotion/react";
+import { useTheme } from "@mui/material/styles";
 import Box from '@mui/material/Box';
 import Fade from '@mui/material/Fade';
 import Paper from '@mui/material/Paper'
 import Typography from '@mui/material/Typography';
 import { Temporal } from 'temporal-polyfill'
 import Image from './livein19202.png';
+import './index.css';
+import Slide from '@mui/material/Slide';
 import { SequenceAnimator } from 'react-sequence-animator';
 import i00 from './images/intro/Chameleon_LT_IPP_Block_Opener_00000.png';
 import i01 from './images/intro/Chameleon_LT_IPP_Block_Opener_00001.png';
@@ -56,6 +60,7 @@ import i46 from './images/intro/Chameleon_LT_IPP_Block_Opener_00046.png';
 import i47 from './images/intro/Chameleon_LT_IPP_Block_Opener_00047.png';
 import i48 from './images/intro/Chameleon_LT_IPP_Block_Opener_00048.png';
 import i49 from './images/intro/Chameleon_LT_IPP_Block_Opener_00049.png';
+import { styled } from '@mui/material/styles';
 //Performance testing
 // import { data } from './test_data/nexts'
 
@@ -113,60 +118,97 @@ function chooseNexts(next, minDuration) {
   return { title: '' };
 }
 
-function UpComing({ upcomingitems }) {
-  let eventTitle = 'COMING UP';
+function UpComingItem({ item, on, onDelay }) {
+  const [focused, setFocused] = useState(on);
+  useEffect(() => {
+    if (canShow(item)) {
+      const timeOutList = [];
+      console.log(`focused ${focused} onDelay ${onDelay}`);
+      const offDelay = onDelay + 3000;
+      console.log(`focused ${focused} offDelay ${offDelay}`);
+      const focusOn = setTimeout(() => {
+        (async () => {
+          console.log('Firing focus On!');
+          setFocused(true);
+        })();
+      }, onDelay);
+      timeOutList.push(focusOn);
+      const focusOff = setTimeout(() => {
+        (async () => {
+          console.log('Firing focus Off!');
+          setFocused(false);
+        })();
+      }, offDelay);
+      timeOutList.push(focusOff);
+      return () => {
+        for (let i = 0; i < timeOutList.length; i += 1) {
+          clearTimeout(timeOutList[i]);
+        }
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [onDelay])
 
+const containerRef = useRef(null);
+function canShow(item) {
+  if (item) {
+    return (item) && (item.starting || item.brandTitle || item.seriesTitle);
+  }
+  return false;
+}
+return (
+  <Box sx={{ overflow: 'hidden' }} ref={containerRef}>
+    <Slide direction="up"
+      in={canShow(item)} mountOnEnter unmountOnExit
+      container={containerRef.current}
+      onEntered={() => console.log('entered')}
+      addEndListener={() => console.log('addEndListener')}
+      timeout={500}>
+      <div
+        key={item.starting + item.brandTitle + (item.seriesTitle ? `${item.seriesTitle}: ${item.episodeTitle}` : item.episodeTitle)}
+        sx={{ pb: '5%' }}
+        className={focused ? 'itemFocused' : 'itemNormal'}
+      >
+        {item.starting ? <Box>
+          <Typography
+            fontFamily={'BBCReithSans_W_Md'}
+            fontSize={'2.6667rem'}>{item.starting}
+          </Typography>
+        </Box> : ''}
+        {item.brandTitle ?
+          <Box>
+            <Typography
+              fontFamily={'BBCReithSans_W_Bd'}
+              fontSize={'2.6667rem'}>{item.brandTitle}</Typography>
+          </Box> : ''}
+        <Box
+          sx={{
+            display: 'flex',
+            flexWrap: 'wrap',
+            alignContent: 'flex-start',
+          }}
+        >
+          <Typography
+            fontFamily={'BBCReithSans_W_Md'}
+            fontSize={'2.2rem'}>{item.seriesTitle ? `${item.seriesTitle}: ${item.episodeTitle}` : item.episodeTitle}</Typography>
+        </Box>
+      </div>
+    </Slide>
+  </Box >
+)
+}
+
+function UpComing({ upcomingitems }) {
   return (
     <Box sx={{
       width: 'auto', height: '620px',
       display: 'grid', gridTemplateRows: '1fr 1fr 1fr', paddingLeft: '5%', paddingbottom: '5%'
     }}>
-      <Box
-        sx={{
-          display: 'flex',
-          flexWrap: 'wrap',
-          alignContent: 'flex-end',
-        }}
-      >
-        <Typography
-          fontSize={'1.7rem'} key={eventTitle}>
-          <span
-            style={{
-              fontFamily: 'BBCReithSans_W_ExBd',
-              color: iplayerPink
-            }}>
-            {eventTitle}
-          </span>
-        </Typography>
-      </Box>
+      <Box></Box>
       <Box>
-        {upcomingitems.map((item) => {
+        {upcomingitems.map((item, index) => {
           return (
-            <div key={item.starting + item.brandTitle + (item.seriesTitle ? `${item.seriesTitle}: ${item.episodeTitle}` : item.episodeTitle)}>
-              {item.starting ? <Box>
-                <Typography
-                  fontFamily={'BBCReithSans_W_Md'}
-                  fontSize={'1.7rem'} style={{ color: "#a9a9a9" }} >&nbsp;&nbsp;{item.starting}
-                </Typography>
-              </Box> : ''}
-              {item.brandTitle ?
-                <Box>
-                  <Typography
-                    fontFamily={'BBCReithSans_W_Bd'}
-                    fontSize={'2.6667rem'}>&nbsp;&nbsp;&nbsp;&nbsp;{item.brandTitle}</Typography>
-                </Box> : ''}
-              <Box
-                sx={{
-                  display: 'flex',
-                  flexWrap: 'wrap',
-                  alignContent: 'flex-start',
-                }}
-              >
-                <Typography
-                  fontFamily={'BBCReithSans_W_Md'}
-                  fontSize={'2.2rem'}>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{item.seriesTitle ? `${item.seriesTitle}: ${item.episodeTitle}` : item.episodeTitle}</Typography>
-              </Box>
-            </div>
+            <UpComingItem item={item} on={false} onDelay={index * 3000} />
           )
         })}
       </Box>
@@ -217,9 +259,11 @@ export default function App(params) {
   const env = params.env || 'live';
   const sid = params.sid || 'History_Channel';
   const region = params.region || 'eu-west-1';
-  const nowThenLater = ['Next', 'Then', 'Later'];
+  const nowThenLater = ['Now', 'Then', 'Later'];
   const minDuration = Temporal.Duration.from(params.minDuration || 'PT2M');
-
+  // localTesting will apply gradients to the parent box so text is visible when testing locally.
+  const localTesting = true;
+  // demo will add a parent image so interstitial is displayed in front of the image when demoing/testing locally.
   const demo = false;
 
   useEffect(() => {
@@ -277,14 +321,14 @@ export default function App(params) {
     if (next.length === 0) {
       const tm = setTimeout(() => {
         (async () => {
-            console.log('about to fetch');
-            const r = await fetch(`${urls[env]}/${sid}/${region}`);
-            if (r.ok) {
-              const data = await r.json()
-              // console.log(`got some data ${JSON.stringify(data)}`);
-              console.log(`got some data ${data}`);
-              setNext(chooseNexts(data.next, minDuration));
-            }
+          console.log('about to fetch');
+          const r = await fetch(`${urls[env]}/${sid}/${region}`);
+          if (r.ok) {
+            const data = await r.json()
+            // console.log(`got some data ${JSON.stringify(data)}`);
+            console.log(`got some data ${data}`);
+            setNext(chooseNexts(data.next, minDuration));
+          }
 
           //about to fake fetch
           // setNext(chooseNexts(data.next, minDuration));
@@ -302,15 +346,15 @@ export default function App(params) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [steady])
 
-  useEffect(() => {
-    // Clear the timeOut when the component unmounts
-    return () => clearTimeout(timerRef.current);
-  }, []);
+  // useEffect(() => {
+  //   // Clear the timeOut when the component unmounts
+  //   return () => clearTimeout(timerRef.current);
+  // }, []);
 
-  const pauseSequence = () => {
-    setSteady(false);
-    timerRef.current = setTimeout(() => setSteady(true), 5000);
-  }
+  // const pauseSequence = () => {
+  //   setSteady(false);
+  //   timerRef.current = setTimeout(() => setSteady(true), 5000);
+  // }
 
   return (
     <Paper elevation={0} sx={
@@ -320,7 +364,7 @@ export default function App(params) {
       <Fade in={on} timeout={500} addEndListener={() => setSteady(true)}>
         <Box
           sx={
-            styling === 'grownup' ?
+            localTesting ? styling === 'grownup' ?
               {
                 height: '720px', width: 'auto', color: 'white',
                 background: 'linear-gradient(to right, rgba(15, 15, 15, .8), rgba(245, 73, 151, .8))',
@@ -330,15 +374,22 @@ export default function App(params) {
                 height: '720px', width: 'auto', color: 'black',
                 background: 'linear-gradient(to right, rgba(255, 255, 255, .9), rgba(255, 255, 255, .9))',
                 display: 'grid', gridTemplateRows: '50px 620px 50px', gridTemplateColumns: '1fr', marginbottom: '100px'
-              }}
-
+              } : styling === 'grownup' ? {
+                height: '720px', width: 'auto', color: 'white',
+                display: 'grid', gridTemplateRows: '50px 620px 50px', gridTemplateColumns: '1fr', marginbottom: '100px'
+              }
+              : {
+                height: '720px', width: 'auto', color: 'black',
+                display: 'grid', gridTemplateRows: '50px 620px 50px', gridTemplateColumns: '1fr', marginbottom: '100px'
+              }
+          }
         >
           <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr' }}>
             <Box><TopLeft show={params.tl} /></Box>
             <Box>
-              {steady ? <SequenceAnimator duration={3000} loop={steady} onSequenceEnd={() => pauseSequence()}>
+              {/* {steady ? <SequenceAnimator duration={3000} loop={steady} onSequenceEnd={() => pauseSequence()}>
                 {introImages.map((im, index) => (<img key={index} src={im} alt='BBC' />))}
-              </SequenceAnimator> : <></>}
+              </SequenceAnimator> : <></>} */}
             </Box>
             <Box sx={{ display: 'block', marginLeft: 'auto' }}><TopRight show={params.tr} /></Box>
           </Box>

@@ -34,3 +34,16 @@ img {
   position: fixed;
   z-index: -1;
 }
+
+.itemNormal {
+  display: inline-block;
+  opacity: 0.5;
+  transform: scale(1);
+  transition: all 100ms linear;
+}
+.itemFocused{
+  opacity: 1;
+  transform: scale(2);
+  transition: all 3s linear;
+}
+
