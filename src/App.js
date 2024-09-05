@@ -118,10 +118,10 @@ function chooseNexts(next, minDuration) {
   return { title: '' };
 }
 
-function UpComingItem({ item, on, onDelay }) {
+function UpComingItem({ item, on, onDelay, steady }) {
   const [focused, setFocused] = useState(on);
   useEffect(() => {
-    if (canShow(item)) {
+    if (canShow(item) && (steady)) {
       const timeOutList = [];
       console.log(`focused ${focused} onDelay ${onDelay}`);
       const offDelay = onDelay + 3000;
@@ -151,8 +151,8 @@ function UpComingItem({ item, on, onDelay }) {
 
 const containerRef = useRef(null);
 function canShow(item) {
-  if (item) {
-    return (item) && (item.starting || item.brandTitle || item.seriesTitle);
+  if ((item)){
+    return ((item) && (item.starting || item.brandTitle || item.seriesTitle));
   }
   return false;
 }
@@ -198,7 +198,7 @@ return (
 )
 }
 
-function UpComing({ upcomingitems }) {
+function UpComing({ upcomingitems, steady }) {
   return (
     <Box sx={{
       width: 'auto', height: '620px',
@@ -206,11 +206,11 @@ function UpComing({ upcomingitems }) {
     }}>
       <Box></Box>
       <Box>
-        {upcomingitems.map((item, index) => {
+        {steady ? upcomingitems.map((item, index) => {
           return (
-            <UpComingItem item={item} on={false} onDelay={index * 3000} />
+            <UpComingItem item={item} on={false} onDelay={index * 3000} steady={steady} />
           )
-        })}
+        }): <></>}
       </Box>
       <Box></Box>
     </Box>
@@ -222,13 +222,13 @@ function UpComing({ upcomingitems }) {
 //   return (duration.hours * 60 * 60 * 1000) + (duration.minutes * 60 * 1000) + (duration.seconds * 1000) + duration.milliseconds;
 // }
 
-function Middle({ params, upcomingitems }) {
+function Middle({ params, upcomingitems, steady }) {
   const containerRef = React.useRef(null);
 
   return (
     <Box sx={{ overflow: 'hidden' }} ref={containerRef}>
       <Box display='flex' alignItems='center'>
-        <UpComing upcomingitems={upcomingitems} />
+        <UpComing upcomingitems={upcomingitems} steady={steady}/>
       </Box>
     </Box>
   );
@@ -393,7 +393,7 @@ export default function App(params) {
             </Box>
             <Box sx={{ display: 'block', marginLeft: 'auto' }}><TopRight show={params.tr} /></Box>
           </Box>
-          <Middle params={params} upcomingitems={upcomingitems} styling={styling} />
+          <Middle params={params} upcomingitems={upcomingitems} styling={styling} steady={steady}/>
           <Box></Box>
         </Box>
       </Fade>
