@@ -36,14 +36,19 @@ img {
 }
 
 .itemNormal {
-  display: inline-block;
+  display: block;
   opacity: 0.5;
+  transform-origin: left;
   transform: scale(1);
-  transition: all 100ms linear;
+  transition-delay: 2800ms;
+  transition: all 200ms linear;
+  overflow: 'hidden';
 }
 .itemFocused{
   opacity: 1;
-  transform: scale(2);
-  transition: all 3s linear;
+  transform-origin: left;
+  transform: scale(1.66);
+  transition: all 200ms linear;
+  overflow: 'hidden';
 }
 

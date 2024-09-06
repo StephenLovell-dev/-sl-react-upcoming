@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { css, keyframes } from "@emotion/react";
-import { useTheme } from "@mui/material/styles";
+// import { css, keyframes } from "@emotion/react";
+// import { useTheme } from "@mui/material/styles";
 import Box from '@mui/material/Box';
 import Fade from '@mui/material/Fade';
 import Paper from '@mui/material/Paper'
@@ -60,10 +60,9 @@ import i46 from './images/intro/Chameleon_LT_IPP_Block_Opener_00046.png';
 import i47 from './images/intro/Chameleon_LT_IPP_Block_Opener_00047.png';
 import i48 from './images/intro/Chameleon_LT_IPP_Block_Opener_00048.png';
 import i49 from './images/intro/Chameleon_LT_IPP_Block_Opener_00049.png';
-import { styled } from '@mui/material/styles';
+// import { styled } from '@mui/material/styles';
 //Performance testing
-// import { data } from './test_data/nexts'
-
+import { data } from './test_data/nexts'
 
 const introImages = [
   i00, i01, i02, i03, i04, i05, i06, i07, i08, i09,
@@ -119,6 +118,7 @@ function chooseNexts(next, minDuration) {
 }
 
 function UpComingItem({ item, on, onDelay, steady }) {
+  console.log(`UpcomingItem ${steady}`);
   const [focused, setFocused] = useState(on);
   useEffect(() => {
     if (canShow(item) && (steady)) {
@@ -149,56 +149,60 @@ function UpComingItem({ item, on, onDelay, steady }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [onDelay])
 
-const containerRef = useRef(null);
-function canShow(item) {
-  if ((item)){
-    return ((item) && (item.starting || item.brandTitle || item.seriesTitle));
+  const containerRef = useRef(null);
+  function canShow(item) {
+    if ((item)) {
+      return ((item) && (item.starting || item.brandTitle || item.seriesTitle));
+    }
+    return false;
   }
-  return false;
-}
-return (
-  <Box sx={{ overflow: 'hidden' }} ref={containerRef}>
-    <Slide direction="up"
-      in={canShow(item)} mountOnEnter unmountOnExit
-      container={containerRef.current}
-      onEntered={() => console.log('entered')}
-      addEndListener={() => console.log('addEndListener')}
-      timeout={500}>
-      <div
-        key={item.starting + item.brandTitle + (item.seriesTitle ? `${item.seriesTitle}: ${item.episodeTitle}` : item.episodeTitle)}
-        sx={{ pb: '5%' }}
-        className={focused ? 'itemFocused' : 'itemNormal'}
-      >
-        {item.starting ? <Box>
-          <Typography
-            fontFamily={'BBCReithSans_W_Md'}
-            fontSize={'2.6667rem'}>{item.starting}
-          </Typography>
-        </Box> : ''}
-        {item.brandTitle ?
-          <Box>
+  return (
+    <Box className={focused ? 'itemFocused' : 'itemNormal'}>
+    <Box
+      sx={{overflow: 'hidden', flexGrow: 1, flexShrink: 0 }}
+      ref={containerRef}
+      key={item.starting + item.brandTitle + (item.seriesTitle ? `${item.seriesTitle}: ${item.episodeTitle}` : item.episodeTitle)}
+      style={{ paddingTop: '18px', paddingBottom: '18px' }}
+    >
+      <Slide direction="up"
+        in={true} mountOnEnter unmountOnExit
+        container={containerRef.current}
+        onEntered={() => console.log('slide entered')}
+        addEndListener={() => console.log('slide addEndListener')}
+        timeout={1000}>
+        <div>
+          {item.starting ? <Box>
             <Typography
-              fontFamily={'BBCReithSans_W_Bd'}
-              fontSize={'2.6667rem'}>{item.brandTitle}</Typography>
+              fontFamily={'BBCReithSans_W_Md'}
+              fontSize={'1.7rem'}>{item.starting}
+            </Typography>
           </Box> : ''}
-        <Box
-          sx={{
-            display: 'flex',
-            flexWrap: 'wrap',
-            alignContent: 'flex-start',
-          }}
-        >
-          <Typography
-            fontFamily={'BBCReithSans_W_Md'}
-            fontSize={'2.2rem'}>{item.seriesTitle ? `${item.seriesTitle}: ${item.episodeTitle}` : item.episodeTitle}</Typography>
-        </Box>
-      </div>
-    </Slide>
-  </Box >
-)
+          {item.brandTitle ?
+            <Box>
+              <Typography
+                fontFamily={'BBCReithSans_W_Bd'}
+                fontSize={'2.2rem'}>{item.brandTitle}</Typography>
+            </Box> : ''}
+          <Box
+            sx={{
+              display: 'flex',
+              flexWrap: 'wrap',
+              alignContent: 'flex-start',
+            }}
+          >
+            <Typography
+              fontFamily={'BBCReithSans_W_Md'}
+              fontSize={'1.7rem'}>{item.seriesTitle ? `${item.seriesTitle}: ${item.episodeTitle}` : item.episodeTitle}</Typography>
+          </Box>
+          </div>
+      </Slide>
+    </Box >
+    </Box>
+  )
 }
 
 function UpComing({ upcomingitems, steady }) {
+  console.log(`Upcoming ${steady}`);
   return (
     <Box sx={{
       width: 'auto', height: '620px',
@@ -208,9 +212,9 @@ function UpComing({ upcomingitems, steady }) {
       <Box>
         {steady ? upcomingitems.map((item, index) => {
           return (
-            <UpComingItem item={item} on={false} onDelay={index * 3000} steady={steady} />
+            <UpComingItem key={index} item={item} on={index === 0} onDelay={index * 3000} steady={steady} />
           )
-        }): <></>}
+        }) : <></>}
       </Box>
       <Box></Box>
     </Box>
@@ -228,7 +232,7 @@ function Middle({ params, upcomingitems, steady }) {
   return (
     <Box sx={{ overflow: 'hidden' }} ref={containerRef}>
       <Box display='flex' alignItems='center'>
-        <UpComing upcomingitems={upcomingitems} steady={steady}/>
+        <UpComing upcomingitems={upcomingitems} steady={steady} />
       </Box>
     </Box>
   );
@@ -322,16 +326,25 @@ export default function App(params) {
       const tm = setTimeout(() => {
         (async () => {
           console.log('about to fetch');
-          const r = await fetch(`${urls[env]}/${sid}/${region}`);
-          if (r.ok) {
-            const data = await r.json()
-            // console.log(`got some data ${JSON.stringify(data)}`);
-            console.log(`got some data ${data}`);
-            setNext(chooseNexts(data.next, minDuration));
-          }
-
+          // const r = await fetch(`${urls[env]}/${sid}/${region}`);
+          // if (r.ok) {
+          //   const data = await r.json()
+          //   // console.log(`got some data ${JSON.stringify(data)}`);
+          //   console.log(`got some data ${data}`);
+          //   setNext(chooseNexts(data.next, minDuration));
+          // }
+          // /test_data/nexts
+          //local file fetch
+          // const r = await fetch(`/test_data/nexts.json`, {mode: 'no-cors'});
+          // if (r.ok) {
+          //   console.log(`r ${JSON.stringify(r)}`);
+          //   const data = await r.json()
+          //   // console.log(`got some data ${JSON.stringify(data)}`);
+          //   console.log(`got some data ${data}`);
+          //   setNext(chooseNexts(data.next, minDuration));
+          // }
           //about to fake fetch
-          // setNext(chooseNexts(data.next, minDuration));
+          setNext(chooseNexts(data.next, minDuration));
         })();
 
       }, 0);
@@ -375,7 +388,7 @@ export default function App(params) {
                 background: 'linear-gradient(to right, rgba(255, 255, 255, .9), rgba(255, 255, 255, .9))',
                 display: 'grid', gridTemplateRows: '50px 620px 50px', gridTemplateColumns: '1fr', marginbottom: '100px'
               } : styling === 'grownup' ? {
-                height: '720px', width: 'auto', color: 'white',
+                height: '720px', width: 'auto', color: '#ededed',
                 display: 'grid', gridTemplateRows: '50px 620px 50px', gridTemplateColumns: '1fr', marginbottom: '100px'
               }
               : {
@@ -393,7 +406,7 @@ export default function App(params) {
             </Box>
             <Box sx={{ display: 'block', marginLeft: 'auto' }}><TopRight show={params.tr} /></Box>
           </Box>
-          <Middle params={params} upcomingitems={upcomingitems} styling={styling} steady={steady}/>
+          <Middle params={params} upcomingitems={upcomingitems} styling={styling} steady={steady} />
           <Box></Box>
         </Box>
       </Fade>
