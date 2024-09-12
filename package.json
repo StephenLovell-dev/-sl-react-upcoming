@@ -1,6 +1,7 @@
 {
   "name": "interstitial",
   "version": "0.1.0",
+  "homepage": "https://stephenlovell-dev.github.io/sl-react-upcoming/",
   "private": true,
   "dependencies": {
     "@emotion/react": "^11.13.3",
