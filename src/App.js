@@ -267,7 +267,7 @@ export default function App(params) {
   const nowThenLater = ['Now', 'Then', 'Later'];
   const minDuration = Temporal.Duration.from(params.minDuration || 'PT2M');
   // localTesting will apply gradients to the parent box so text is visible when testing locally.
-  const localTesting = true;
+  const localTesting = false;
   // demo will add a parent image so interstitial is displayed in front of the image when demoing/testing locally.
   const demo = false;
 
