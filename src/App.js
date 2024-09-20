@@ -62,7 +62,7 @@ import Slide from '@mui/material/Slide';
 // import i49 from './images/intro/Chameleon_LT_IPP_Block_Opener_00049.png';
 // import { styled } from '@mui/material/styles';
 //Performance testing
-import { data } from './test_data/nexts'
+// import { data } from './test_data/nexts'
 
 // const introImages = [
 //   i00, i01, i02, i03, i04, i05, i06, i07, i08, i09,
@@ -261,9 +261,9 @@ export default function App(params) {
 
   // const timerRef = useRef(null);
 
-  // const env = params.env || 'live';
-  // const sid = params.sid || 'History_Channel';
-  // const region = params.region || 'eu-west-1';
+  const env = params.env || 'live';
+  const sid = params.sid || 'History_Channel';
+  const region = params.region || 'eu-west-1';
   const nowThenLater = ['Now', 'Then', 'Later'];
   const minDuration = Temporal.Duration.from(params.minDuration || 'PT2M');
   // localTesting will apply gradients to the parent box so text is visible when testing locally.
