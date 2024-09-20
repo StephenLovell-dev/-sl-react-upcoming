@@ -327,13 +327,13 @@ export default function App(params) {
       const tm = setTimeout(() => {
         (async () => {
           console.log('about to fetch');
-          // const r = await fetch(`${urls[env]}/${sid}/${region}`);
-          // if (r.ok) {
-          //   const data = await r.json()
-          //   // console.log(`got some data ${JSON.stringify(data)}`);
-          //   console.log(`got some data ${data}`);
-          //   setNext(chooseNexts(data.next, minDuration));
-          // }
+          const r = await fetch(`${urls[env]}/${sid}/${region}?schedule_only=1`);
+          if (r.ok) {
+            const data = await r.json()
+            // console.log(`got some data ${JSON.stringify(data)}`);
+            console.log(`got some data ${data}`);
+            setNext(chooseNexts(data.next, minDuration));
+          }
           // /test_data/nexts
           //local file fetch
           // const r = await fetch(`/test_data/nexts.json`, {mode: 'no-cors'});
@@ -345,7 +345,7 @@ export default function App(params) {
           //   setNext(chooseNexts(data.next, minDuration));
           // }
           //about to fake fetch
-          setNext(chooseNexts(data.next, minDuration));
+          // setNext(chooseNexts(data.next, minDuration));
         })();
 
       }, 0);
