@@ -38,6 +38,7 @@ Use the following variables in the App function in App.js to turn on/off backgro
 
   // localTesting will apply gradients to the parent box so text is visible when testing locally.
   const localTesting = true;
+  
   // demo will add a parent image so interstitial is displayed in front of the image when demoing/testing locally.
   const demo = false;
 
