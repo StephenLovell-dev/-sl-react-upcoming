@@ -32,7 +32,15 @@ The file App.js contains all the logic for the programme. It can be modified to 
 
 These defaults are hard coded:
 
-Interval between polling for now/next information: 5 seconds.
-now/next will be shown during the first 12 seconds of every 1/2 minute.
-time to fade in the lower third: 1 second
-time to slide in the now or next: xxxx second
+The now next lambda is called once when the page is loaded. When the lamabda response has been processed to generate the Now>Next>Later messages the animation of the page will start.
+
+Use the following variables in the App function in App.js to turn on/off backgrounds and gradients when debugging locally.
+
+  // localTesting will apply gradients to the parent box so text is visible when testing locally.
+  const localTesting = true;
+  // demo will add a parent image so interstitial is displayed in front of the image when demoing/testing locally.
+  const demo = false;
+
+TODO: There is a bug where the fade is being applied to the gradient instead of to the text as it slides up!
+
+TODO: The text elements need to shift up and down as each of it's sibling elements is scaled.  
