@@ -261,8 +261,8 @@ export default function App(params) {
 
   // const timerRef = useRef(null);
 
-  const env = params.env || 'live';
-  const sid = params.sid || 'History_Channel';
+  const env = params.env || 'test';
+  const sid = params.sid || 'steve_sid';
   const region = params.region || 'eu-west-1';
   const nowThenLater = ['Now', 'Then', 'Later'];
   const minDuration = Temporal.Duration.from(params.minDuration || 'PT2M');
