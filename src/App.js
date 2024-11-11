@@ -375,7 +375,7 @@ export default function App(params) {
       demo === true ?
         { backgroundImage: `url(${Image})`, backgroundRepeat: 'round' }
         : { backgroundColor: 'transparent' }}>
-      <Fade in={on} timeout={500} addEndListener={() => setSteady(true)}>
+      <Fade in={on} timeout={1} addEndListener={() => setSteady(true)}>
         <Box
           sx={
             localTesting ? styling === 'grownup' ?
