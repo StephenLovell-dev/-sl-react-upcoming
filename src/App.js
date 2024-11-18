@@ -9,6 +9,8 @@ import { Temporal } from 'temporal-polyfill'
 import Image from './livein19202.png';
 import './index.css';
 import Slide from '@mui/material/Slide';
+//Performance testing
+import { data } from './test_data/nexts'
 // import { SequenceAnimator } from 'react-sequence-animator';
 // import i00 from './images/intro/Chameleon_LT_IPP_Block_Opener_00000.png';
 // import i01 from './images/intro/Chameleon_LT_IPP_Block_Opener_00001.png';
@@ -61,8 +63,7 @@ import Slide from '@mui/material/Slide';
 // import i48 from './images/intro/Chameleon_LT_IPP_Block_Opener_00048.png';
 // import i49 from './images/intro/Chameleon_LT_IPP_Block_Opener_00049.png';
 // import { styled } from '@mui/material/styles';
-//Performance testing
-// import { data } from './test_data/nexts'
+
 
 // const introImages = [
 //   i00, i01, i02, i03, i04, i05, i06, i07, i08, i09,
@@ -118,7 +119,7 @@ function chooseNexts(next, minDuration) {
   return { title: '' };
 }
 
-function UpComingItem({ item, on, onDelay, steady }) {
+function UpComingItem({ item, on, onDelay, noOff, steady }) {
   console.log(`UpcomingItem ${steady}`);
   const [focused, setFocused] = useState(on);
   useEffect(() => {
@@ -134,13 +135,15 @@ function UpComingItem({ item, on, onDelay, steady }) {
         })();
       }, onDelay);
       timeOutList.push(focusOn);
-      const focusOff = setTimeout(() => {
-        (async () => {
-          console.log('Firing focus Off!');
-          setFocused(false);
-        })();
-      }, offDelay);
-      timeOutList.push(focusOff);
+      if(!noOff) {
+        const focusOff = setTimeout(() => {
+          (async () => {
+            console.log('Firing focus Off!');
+            setFocused(false);
+          })();
+        }, offDelay);
+        timeOutList.push(focusOff);
+      }
       return () => {
         for (let i = 0; i < timeOutList.length; i += 1) {
           clearTimeout(timeOutList[i]);
@@ -159,45 +162,45 @@ function UpComingItem({ item, on, onDelay, steady }) {
   }
   return (
     <Box className={focused ? 'itemFocused' : 'itemNormal'}>
-    <Box
-      sx={{overflow: 'hidden', flexGrow: 1, flexShrink: 0 }}
-      ref={containerRef}
-      key={item.starting + item.brandTitle + (item.seriesTitle ? `${item.seriesTitle}: ${item.episodeTitle}` : item.episodeTitle)}
-      style={{ paddingTop: '18px', paddingBottom: '18px' }}
-    >
-      <Slide direction="up"
-        in={true} mountOnEnter unmountOnExit
-        container={containerRef.current}
-        onEntered={() => console.log('slide entered')}
-        addEndListener={() => console.log('slide addEndListener')}
-        timeout={1000}>
-        <div>
-          {item.starting ? <Box>
-            <Typography
-              fontFamily={'BBCReithSans_W_Md'}
-              fontSize={'1.7rem'}>{item.starting}
-            </Typography>
-          </Box> : ''}
-          {item.brandTitle ?
-            <Box>
+      <Box
+        sx={{ overflow: 'hidden', flexGrow: 1, flexShrink: 0 }}
+        ref={containerRef}
+        key={item.starting + item.brandTitle + (item.seriesTitle ? `${item.seriesTitle}: ${item.episodeTitle}` : item.episodeTitle)}
+        style={{ paddingTop: '18px', paddingBottom: '18px' }}
+      >
+        <Slide direction="up"
+          in={true} mountOnEnter unmountOnExit
+          container={containerRef.current}
+          onEntered={() => console.log('slide entered')}
+          addEndListener={() => console.log('slide addEndListener')}
+          timeout={1000}>
+          <div>
+            {item.starting ? <Box>
               <Typography
-                fontFamily={'BBCReithSans_W_Bd'}
-                fontSize={'2.2rem'}>{item.brandTitle}</Typography>
+                fontFamily={'BBCReithSans_W_Md'}
+                fontSize={'1.7rem'}>{item.starting}
+              </Typography>
             </Box> : ''}
-          <Box
-            sx={{
-              display: 'flex',
-              flexWrap: 'wrap',
-              alignContent: 'flex-start',
-            }}
-          >
-            <Typography
-              fontFamily={'BBCReithSans_W_Md'}
-              fontSize={'1.7rem'}>{item.seriesTitle ? `${item.seriesTitle}: ${item.episodeTitle}` : item.episodeTitle}</Typography>
-          </Box>
+            {item.brandTitle ?
+              <Box>
+                <Typography
+                  fontFamily={'BBCReithSans_W_Bd'}
+                  fontSize={'2.2rem'}>{item.brandTitle}</Typography>
+              </Box> : ''}
+            <Box
+              sx={{
+                display: 'flex',
+                flexWrap: 'wrap',
+                alignContent: 'flex-start',
+              }}
+            >
+              <Typography
+                fontFamily={'BBCReithSans_W_Md'}
+                fontSize={'1.7rem'}>{item.seriesTitle ? `${item.seriesTitle}: ${item.episodeTitle}` : item.episodeTitle}</Typography>
+            </Box>
           </div>
-      </Slide>
-    </Box >
+        </Slide>
+      </Box >
     </Box>
   )
 }
@@ -213,7 +216,7 @@ function UpComing({ upcomingitems, steady }) {
       <Box>
         {steady ? upcomingitems.map((item, index) => {
           return (
-            <UpComingItem key={index} item={item} on={index === 0} onDelay={index * 3000} steady={steady} />
+            <UpComingItem key={index} item={item} on={index === 0} noOff={upcomingitems.length -1 === index} onDelay={index * 3000} steady={steady} />
           )
         }) : <></>}
       </Box>
@@ -221,11 +224,6 @@ function UpComing({ upcomingitems, steady }) {
     </Box>
   );
 }
-
-// function convertISOTimeToMilliSeconds(inISOTime) {
-//   const duration = Temporal.Duration.from(inISOTime);
-//   return (duration.hours * 60 * 60 * 1000) + (duration.minutes * 60 * 1000) + (duration.seconds * 1000) + duration.milliseconds;
-// }
 
 function Middle({ params, upcomingitems, steady }) {
   const containerRef = React.useRef(null);
@@ -259,12 +257,13 @@ export default function App(params) {
   const [next, setNext] = useState([]);
   const [upcomingitems, setUpcomingItems] = useState([]);
 
-  // const timerRef = useRef(null);
-
   const env = params.env || 'test';
   const sid = params.sid || 'steve_sid';
   const region = params.region || 'eu-west-1';
-  const nowThenLater = ['Now', 'Then', 'Later'];
+  const useDummyData = params.dummy || 0; // dummy can be set to 0 or 1
+  const dataDelay = params.ddelay || 0; // dummyDelay should be set in milliseconds e.g. dummyDelay=400 
+  const showTimes = params.timeson || 0; // Add time element to the Now/Next/Later labels
+  const nowThenLater = ['Now', 'Next', 'Later'];
   const minDuration = Temporal.Duration.from(params.minDuration || 'PT2M');
   // localTesting will apply gradients to the parent box so text is visible when testing locally.
   const localTesting = false;
@@ -292,31 +291,30 @@ export default function App(params) {
             item.starting = nowThenLater[0];
             nowThenLater.shift();
           }
-          const start = Date.parse(next[addedCount].start);
-          const startTime = new Date(next[addedCount].start).toLocaleTimeString(navigator.language, { hour: '2-digit', minute: '2-digit', hour12: true });
-          const secondsToNext = Math.round((start - (new Date())) / 1000);
-          if (secondsToNext < 60) {
-            if ((secondsToNext >= 1) && (secondsToNext < 2)) {
-              item.starting = `${item.starting} in 1 second`;
-            } else if (secondsToNext >= 2) {
-              item.starting = `${item.starting} in ${secondsToNext} seconds`;
+          if (showTimes) {
+            const start = Date.parse(next[addedCount].start);
+            const startTime = new Date(next[addedCount].start).toLocaleTimeString(navigator.language, { hour: '2-digit', minute: '2-digit', hour12: true });
+            const secondsToNext = Math.round((start - (new Date())) / 1000);
+            if (secondsToNext < 60) {
+              if ((secondsToNext >= 1) && (secondsToNext < 2)) {
+                item.starting = `${item.starting} in 1 second`;
+              } else if (secondsToNext >= 2) {
+                item.starting = `${item.starting} in ${secondsToNext} seconds`;
+              }
+            } else if (secondsToNext < oneHour) {
+              const minutesToNext = Math.round(secondsToNext / 60);
+              item.starting = `${item.starting} in ${minutesToNext} ${minutesToNext === 1 ? 'minute' : 'minutes'}`;
+            } else {
+              item.starting = `${item.starting} at ${startTime}`;
             }
-          } else if (secondsToNext < oneHour) {
-            const minutesToNext = Math.round(secondsToNext / 60);
-            item.starting = `${item.starting} in ${minutesToNext} ${minutesToNext === 1 ? 'minute' : 'minutes'}`;
-          } else {
-            item.starting = `${item.starting} at ${startTime}`;
           }
-
           items.push(item);
           addedCount += 1;
           canAdd = items.length < itemsToAdd && items.length < next.length;
-
         }
       }
       console.log('setting upcoming items');
       setUpcomingItems(items);
-
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [next]);
@@ -326,12 +324,17 @@ export default function App(params) {
     if (next.length === 0) {
       const tm = setTimeout(() => {
         (async () => {
-          console.log('about to fetch');
-          const r = await fetch(`${urls[env]}/${sid}/${region}?schedule_only=1`);
-          if (r.ok) {
-            const data = await r.json()
-            // console.log(`got some data ${JSON.stringify(data)}`);
-            console.log(`got some data ${data}`);
+          console.log(`about to fetch (use dummy data set to ${useDummyData} ${dataDelay}`);
+          if (!useDummyData) {
+            const r = await fetch(`${urls[env]}/${sid}/${region}?schedule_only=1`);
+            if (r.ok) {
+              const data = await r.json()
+              // console.log(`got some data ${JSON.stringify(data)}`);
+              console.log(`got some data ${data}`);
+              setNext(chooseNexts(data.next, minDuration));
+            }
+          } else {
+            //about to fake fetch
             setNext(chooseNexts(data.next, minDuration));
           }
           // /test_data/nexts
@@ -347,28 +350,15 @@ export default function App(params) {
           //about to fake fetch
           // setNext(chooseNexts(data.next, minDuration));
         })();
-
-      }, 0);
+      }, dataDelay);
       return () => clearTimeout(tm);
     }
   });
-
-
 
   useEffect(() => {
     console.log(`steady is ${steady}`);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [steady])
-
-  // useEffect(() => {
-  //   // Clear the timeOut when the component unmounts
-  //   return () => clearTimeout(timerRef.current);
-  // }, []);
-
-  // const pauseSequence = () => {
-  //   setSteady(false);
-  //   timerRef.current = setTimeout(() => setSteady(true), 5000);
-  // }
 
   return (
     <Paper elevation={0} sx={
