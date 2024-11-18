@@ -31,7 +31,7 @@ It can be configured with the following url parameters:
 The following parameters can be added to the url, for page load time and speed profiling:
 
 - **dummy** This parameter can be used to load in dummy upcoming data instead of calling the now/next api. Can be set to 0 or 1, defaults to 0. 
-- **ddelay** This parameter can be used to delat the call to fetch data, by default it is set to 0.  Set to a millisecond value to delay the loading of the dummy data e.g. ddelay=600
+- **ddelay** This parameter can be used to delay the call to fetch data, by default it is set to 0.  Set to a millisecond value to delay the loading of the dummy data e.g. ddelay=600
 
 Further customisation
 The file App.js contains all the logic for the programme. It can be modified to change the styling of the Now/Next information or the DoG urls or any element of the page.
@@ -47,7 +47,6 @@ Use the following variables in the App function in App.js to turn on/off backgro
   
   // demo will add a parent image so interstitial is displayed in front of the image when demoing/testing locally.
   const demo = false;
-
 
 
 TODO: The text elements need to shift up and down as each of it's sibling elements is scaled.  
