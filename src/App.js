@@ -225,7 +225,7 @@ function UpComing({ upcomingitems, steady }) {
   );
 }
 
-function Middle({ params, upcomingitems, steady }) {
+function Middle({ upcomingitems, steady }) {
   const containerRef = React.useRef(null);
 
   return (
@@ -334,21 +334,18 @@ export default function App(params) {
               setNext(chooseNexts(data.next, minDuration));
             }
           } else {
+            //local file fetch
+            // const r = await fetch(`/test_data/nexts.json`, {mode: 'no-cors'});
+            // if (r.ok) {
+            //   console.log(`r ${JSON.stringify(r)}`);
+            //   const data = await r.json()
+            //   // console.log(`got some data ${JSON.stringify(data)}`);
+            //   console.log(`got some data ${data}`);
+            //   setNext(chooseNexts(data.next, minDuration));
+            // }
             //about to fake fetch
             setNext(chooseNexts(data.next, minDuration));
           }
-          // /test_data/nexts
-          //local file fetch
-          // const r = await fetch(`/test_data/nexts.json`, {mode: 'no-cors'});
-          // if (r.ok) {
-          //   console.log(`r ${JSON.stringify(r)}`);
-          //   const data = await r.json()
-          //   // console.log(`got some data ${JSON.stringify(data)}`);
-          //   console.log(`got some data ${data}`);
-          //   setNext(chooseNexts(data.next, minDuration));
-          // }
-          //about to fake fetch
-          // setNext(chooseNexts(data.next, minDuration));
         })();
       }, dataDelay);
       return () => clearTimeout(tm);
@@ -397,7 +394,7 @@ export default function App(params) {
             </Box>
             <Box sx={{ display: 'block', marginLeft: 'auto' }}><TopRight show={params.tr} /></Box>
           </Box>
-          <Middle params={params} upcomingitems={upcomingitems} styling={styling} steady={steady} />
+          <Middle upcomingitems={upcomingitems} styling={styling} steady={steady} />
           <Box></Box>
         </Box>
       </Fade>
