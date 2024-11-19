@@ -16,6 +16,16 @@ const urls = {
   live: 'https://ypdjc6zbc5cnvth24lk3mm45sm0qtgps.lambda-url.eu-west-1.on.aws'
 };
 
+// .videoTag {
+//   position: fixed;
+//   z-index: -1;
+// }
+
+const videoTag = {
+    position: 'fixed',
+    zIndex: '-1'
+  };
+
 function titlefor(o, rel) {
   return o.title_hierarchy?.titles?.find((t) => t.inherited_from?.link?.rel === `pips-meta:${rel}`)?.title?.$;
 }

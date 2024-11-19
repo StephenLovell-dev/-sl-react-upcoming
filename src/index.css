@@ -30,11 +30,6 @@ img {
   src: local('BBCReithSans_W_ExBd'), url(./fonts/BBCReithSans_W_ExBd.woff2) format('woff2');
 }
 
-.videoTag {
-  position: fixed;
-  z-index: -1;
-}
-
 .itemNormal {
   display: block;
   opacity: 0.5;
@@ -51,4 +46,3 @@ img {
   transition: all 200ms linear;
   overflow: 'hidden';
 }
-
