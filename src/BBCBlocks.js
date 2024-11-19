@@ -61,3 +61,7 @@ const introImages = [
 export default function BBCBoxes() {
     return introImages.map((im, index) => (<img key={index} src={im} alt='BBC' />))
 }
+
+/* {steady ? <SequenceAnimator duration={3000} loop={steady} onSequenceEnd={() => pauseSequence()}>
+  {introImages.map((im, index) => (<img key={index} src={im} alt='BBC' />))}
+</SequenceAnimator> : <></>} */
