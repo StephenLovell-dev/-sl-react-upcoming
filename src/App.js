@@ -298,7 +298,9 @@ export default function App(params) {
               }
               console.log(chunks);
               let data;
-              const decoded = Decodeuint8arr(chunks[0]);
+              const flattened = chunks.flat(Infinity);
+              console.log(flattened);
+              const decoded = Decodeuint8arr(...flattened);
               try {
                 // Convert the buffer to a string
                 data = JSON.parse(decoded);
