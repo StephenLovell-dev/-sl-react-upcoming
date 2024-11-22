@@ -7,8 +7,9 @@ import { Temporal } from 'temporal-polyfill'
 import Image from './livein19202.png';
 import './index.css';
 import Slide from '@mui/material/Slide';
+
 //Performance testing
-import { data } from './test_data/nexts'
+// import { data } from './test_data/nexts'
 
 // eslint-disable-next-line no-unused-vars
 const urls = {
@@ -17,6 +18,10 @@ const urls = {
 };
 
 const oneHour = 60 * 60;
+
+function Decodeuint8arr(uint8array){
+  return new TextDecoder("utf-8").decode(uint8array);
+}
 
 function titlefor(o, rel) {
   return o.title_hierarchy?.titles?.find((t) => t.inherited_from?.link?.rel === `pips-meta:${rel}`)?.title?.$;
@@ -270,16 +275,40 @@ export default function App(params) {
             }
           } else {
             //local file fetch
-            // const r = await fetch(`/test_data/nexts.json`, {mode: 'no-cors'});
-            // if (r.ok) {
-            //   console.log(`r ${JSON.stringify(r)}`);
-            //   const data = await r.json()
-            //   // console.log(`got some data ${JSON.stringify(data)}`);
-            //   console.log(`got some data ${data}`);
-            //   setNext(chooseNexts(data.next, minDuration));
-            // }
-            //about to fake fetch
-            setNext(chooseNexts(data.next, minDuration));
+            const r = await fetch(`./channels/${sid}.json`, {mode: 'no-cors'})
+
+            if (r.ok) {
+              console.log(r.text)
+              console.log(r.body);
+              const reader = r.body.getReader();
+              const chunks = [];
+              let reading = true;
+              while (reading) {
+                const { done, value } = await reader.read();
+                if (done) {
+                  // Do something with last chunk of data then exit reader
+                  if (value)
+                    chunks.push(value);
+                  reading = !done;
+                  break;
+                }
+                // Otherwise do something here to process current chunk
+                if (value)
+                  chunks.push(value);
+              }
+              console.log(chunks);
+              let data;
+              const decoded = Decodeuint8arr(chunks[0]);
+              try {
+                // Convert the buffer to a string
+                data = JSON.parse(decoded);
+                console.log(`got some data ${data}`);
+                setNext(chooseNexts(data.next, minDuration));
+              } catch(e) {
+                console.log(`ERROR: ${sid} data isn't JSON i.e. ${decoded}`);
+                setNext(chooseNexts([], minDuration));
+              }
+            }
           }
         })();
       }, dataDelay);
